@@ -1,0 +1,6 @@
+@EvoCommsWeb.Server_HostAddress = http://localhost:5222
+
+GET {{EvoCommsWeb.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
