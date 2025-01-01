@@ -86,14 +86,15 @@ public class AuthController(AuthService authService) : ControllerBase
     }
 
     /// <summary>
-    ///     Endpoint to check if the user is authenticated.
+    ///     Check if the user is authenticated.
     /// </summary>
     /// <returns>Authentication status.</returns>
     [HttpGet("isauthenticated")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthResult), StatusCodes.Status401Unauthorized)]
     public IActionResult IsAuthenticated()
     {
-        bool isAuthenticated = authService.IsAuthenticatedAsync(User);
-        return Ok(isAuthenticated ? "true" : "false");
+        AuthResult isAuthenticated = authService.IsAuthenticatedAsync(User);
+        return isAuthenticated.Success ? Ok(isAuthenticated) : Unauthorized(isAuthenticated);
     }
 }
