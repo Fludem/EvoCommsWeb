@@ -13,17 +13,17 @@ namespace EvoCommsWeb.Server.Controllers.Auth;
 public class AuthController(AuthService authService) : ControllerBase
 {
     /// <summary>
-    ///     Registers a new user.
+    ///     Register a new user.
     /// </summary>
     /// <param name="registerRequest">Registration details.</param>
     /// <returns>Success or failure response.</returns>
     [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(AuthResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthResult), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<AuthResult>> Register([FromBody] RegisterRequest registerRequest)
     {
         if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+            return HandleBadRequest(ModelState);
         AuthResult result = await authService.RegisterUserAsync(registerRequest);
         if (!result.Success)
             return BadRequest(result);
