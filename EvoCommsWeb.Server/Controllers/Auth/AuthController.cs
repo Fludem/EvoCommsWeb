@@ -32,7 +32,7 @@ public class AuthController(AuthService authService) : ControllerBase
     }
 
     /// <summary>
-    ///     Login endpoint using ASP.NET Core Identity.
+    ///     Endpoint to login and receive Session Cookie.
     /// </summary>
     /// <param name="loginRequest">Login credentials.</param>
     /// <returns>Success or failure response.</returns>
