@@ -1,8 +1,7 @@
 using System.Security.Claims;
-using EvoCommsWeb.Server.Auth.DTOs;
+using EvoCommsWeb.Server.Auth.Responses;
 using EvoCommsWeb.Server.Requests.Auth;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
 
 namespace EvoCommsWeb.Server.Auth;
 
@@ -19,41 +18,46 @@ public class AuthService
 
     public async Task<AuthResult> RegisterUserAsync(RegisterRequest request)
     {
-        var userExists = await _userManager.FindByNameAsync(request.Username);
+        IdentityUser? userExists = await _userManager.FindByNameAsync(request.Username);
         if (userExists != null)
             return new AuthResult { Success = false, Message = "User already exists!" };
 
-        var user = new IdentityUser
+        IdentityUser user = new()
         {
             UserName = request.Username,
-            Email = request.Email,
+            Email = request.Email
         };
 
-        var result = await _userManager.CreateAsync(user, request.Password);
+        IdentityResult result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
-            return new AuthResult { Success = false, Message = "Invalid username or password.", Errors = result.Errors };
+            return new AuthResult
+                { Success = false, Message = "Invalid username or password.", Errors = result.Errors };
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        await _signInManager.SignInAsync(user, false);
         return new AuthResult { Success = true, Message = "User registered successfully!" };
     }
 
+
     public async Task<AuthResult> LoginUserAsync(LoginRequest loginRequest)
     {
-        var user = await _userManager.FindByNameAsync(loginRequest.Username);
+        IdentityUser? user = await _userManager.FindByNameAsync(loginRequest.Username);
         if (user == null)
-            return new AuthResult{ Success = false, Message = "Invalid username or password."};
+            return new AuthResult { Success = false, Message = "Invalid username or password." };
 
-        var result = await _signInManager.PasswordSignInAsync(user, loginRequest.Password, loginRequest.RememberMe, lockoutOnFailure: false);
+        SignInResult result =
+            await _signInManager.PasswordSignInAsync(user, loginRequest.Password, loginRequest.RememberMe, false);
         if (result.Succeeded)
-            return new AuthResult{ Success = true, Message = "Logged in successfully." };
+            return new AuthResult { Success = true, Message = "Logged in successfully." };
 
-        return result.IsLockedOut ? new AuthResult { Success = false, Message = "User account locked out."} : new AuthResult { Success = false, Message = "Invalid username or password." };
+        return result.IsLockedOut
+            ? new AuthResult { Success = false, Message = "User account locked out." }
+            : new AuthResult { Success = false, Message = "Invalid username or password." };
     }
-    
+
     public async Task<AuthResult> LogoutUserAsync()
     {
         await _signInManager.SignOutAsync();
-        return new AuthResult{ Success = true, Message = "Logged out successfully." };
+        return new AuthResult { Success = true, Message = "Logged out successfully." };
     }
 
     public bool IsAuthenticatedAsync(ClaimsPrincipal user)
