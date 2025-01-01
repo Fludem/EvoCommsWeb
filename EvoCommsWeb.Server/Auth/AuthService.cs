@@ -60,8 +60,9 @@ public class AuthService
         return new AuthResult { Success = true, Message = "Logged out successfully." };
     }
 
-    public bool IsAuthenticatedAsync(ClaimsPrincipal user)
+    public AuthResult IsAuthenticatedAsync(ClaimsPrincipal user)
     {
-        return user.Identity?.IsAuthenticated ?? false;
+        bool isAuthed = user.Identity?.IsAuthenticated ?? false;
+        return new AuthResult { Success = isAuthed, Message = isAuthed ? "Session Valid" : "Session Invalid" };
     }
 }
