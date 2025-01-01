@@ -4,6 +4,7 @@ using EvoCommsWeb.Server.Requests.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace EvoCommsWeb.Server.Controllers.Auth;
 
@@ -11,7 +12,6 @@ namespace EvoCommsWeb.Server.Controllers.Auth;
 [ApiController]
 public class AuthController(AuthService authService) : ControllerBase
 {
-
     /// <summary>
         /// Registers a new user.
         /// </summary>
@@ -27,9 +27,23 @@ public class AuthController(AuthService authService) : ControllerBase
             var result = await authService.RegisterUserAsync(registerRequest);
             if (!result.Success)
                 return BadRequest(result);
+    ///     Registers a new user.
+    /// </summary>
+    /// <param name="registerRequest">Registration details.</param>
+    /// <returns>Success or failure response.</returns>
+    [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<AuthResult>> Register([FromBody] RegisterRequest registerRequest)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        AuthResult result = await authService.RegisterUserAsync(registerRequest);
+        if (!result.Success)
+            return BadRequest(result);
 
-            return Ok(result);
-        }
+        return Ok(result);
+    }
 
         /// <summary>
         /// Login endpoint using ASP.NET Core Identity.
