@@ -73,12 +73,12 @@ public class AuthController(AuthService authService) : ControllerBase
 
 
     /// <summary>
-    ///     Logout endpoint.
+    ///     Logout endpoint to invalidate session.
     /// </summary>
     /// <returns>Success response.</returns>
     [HttpPost("logout")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthResult), StatusCodes.Status200OK)]
     public async Task<ActionResult<AuthResult>> Logout()
     {
         AuthResult result = await authService.LogoutUserAsync();
