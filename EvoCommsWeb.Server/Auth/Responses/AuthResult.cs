@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace EvoCommsWeb.Server.Auth.DTOs;
+namespace EvoCommsWeb.Server.Auth.Responses;
 
 public class AuthResult
 {

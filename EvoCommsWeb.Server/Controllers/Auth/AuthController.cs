@@ -1,5 +1,5 @@
 using EvoCommsWeb.Server.Auth;
-using EvoCommsWeb.Server.Auth.DTOs;
+using EvoCommsWeb.Server.Auth.Responses;
 using EvoCommsWeb.Server.Requests.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
