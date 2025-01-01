@@ -13,20 +13,6 @@ namespace EvoCommsWeb.Server.Controllers.Auth;
 public class AuthController(AuthService authService) : ControllerBase
 {
     /// <summary>
-        /// Registers a new user.
-        /// </summary>
-        /// <param name="registerRequest">Registration details.</param>
-        /// <returns>Success or failure response.</returns>
-        [HttpPost("register")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var result = await authService.RegisterUserAsync(registerRequest);
-            if (!result.Success)
-                return BadRequest(result);
     ///     Registers a new user.
     /// </summary>
     /// <param name="registerRequest">Registration details.</param>
@@ -45,47 +31,69 @@ public class AuthController(AuthService authService) : ControllerBase
         return Ok(result);
     }
 
-        /// <summary>
-        /// Login endpoint using ASP.NET Core Identity.
-        /// </summary>
-        /// <param name="loginRequest">Login credentials.</param>
-        /// <returns>Success or failure response.</returns>
-        [HttpPost("login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var result = await authService.LoginUserAsync(loginRequest);
-            if (!result.Success)
-                return Unauthorized(result);
+    /// <summary>
+    ///     Login endpoint using ASP.NET Core Identity.
+    /// </summary>
+    /// <param name="loginRequest">Login credentials.</param>
+    /// <returns>Success or failure response.</returns>
+    [HttpPost("login")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(AuthResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(AuthResult), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<AuthResult>> Login([FromBody] LoginRequest loginRequest)
+    {
+        if (!ModelState.IsValid)
+            return HandleBadRequest(ModelState);
+        AuthResult result = await authService.LoginUserAsync(loginRequest);
+        if (!result.Success)
+            return Unauthorized(result);
 
-            return Ok(result);
-        }
+        return Ok(result);
+    }
 
-        /// <summary>
-        /// Logout endpoint.
-        /// </summary>
-        /// <returns>Success response.</returns>
-        [HttpPost("logout")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Logout()
+    /// <summary>
+    ///     Generates a BadRequest response with a standardized AuthResult object.
+    /// </summary>
+    /// <param name="modelState">Collection of error messages.</param>
+    /// <returns>A BadRequest response containing an AuthResult.</returns>
+    private ActionResult<AuthResult> HandleBadRequest(ModelStateDictionary modelState)
+    {
+        IEnumerable<string> errorMessages = modelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage);
+        AuthResult authResult = new()
         {
-            var result = await authService.LogoutUserAsync();
-            return Ok(result);
-        }
+            Success = false,
+            Message = "Invalid Request. Validation failed.",
+            Errors = errorMessages.Select(error => new IdentityError { Description = error })
+        };
+        return BadRequest(authResult);
+    }
 
-        /// <summary>
-        /// Endpoint to check if the user is authenticated.
-        /// </summary>
-        /// <returns>Authentication status.</returns>
-        [HttpGet("isauthenticated")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult IsAuthenticated()
-        {
-            var isAuthenticated = authService.IsAuthenticatedAsync(User);
-            return Ok(new { isAuthenticated });
-        }
+
+    /// <summary>
+    ///     Logout endpoint.
+    /// </summary>
+    /// <returns>Success response.</returns>
+    [HttpPost("logout")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<AuthResult>> Logout()
+    {
+        AuthResult result = await authService.LogoutUserAsync();
+        return Ok(result);
+    }
+
+    /// <summary>
+    ///     Endpoint to check if the user is authenticated.
+    /// </summary>
+    /// <returns>Authentication status.</returns>
+    [HttpGet("isauthenticated")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult IsAuthenticated()
+    {
+        bool isAuthenticated = authService.IsAuthenticatedAsync(User);
+        return Ok(isAuthenticated ? "true" : "false");
+    }
 }
