@@ -3,9 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvoCommsWeb.Server", "EvoCommsWeb.Server\EvoCommsWeb.Server.csproj", "{A5606D3D-C267-4591-B6CF-BE529895C4D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvoCommsWeb.WebPanel.Server", "EvoCommsWeb.WebPanel.Server\EvoCommsWeb.WebPanel.Server.csproj", "{A5606D3D-C267-4591-B6CF-BE529895C4D3}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "evocommsweb.client", "evocommsweb.client\evocommsweb.client.esproj", "{4818EBBC-4B8C-47D8-8C04-22B2859FA002}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "evocommsweb.webpanel.client", "evocommsweb.webpanel.client\evocommsweb.webpanel.client.esproj", "{4818EBBC-4B8C-47D8-8C04-22B2859FA002}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +24,10 @@ Global
 		{4818EBBC-4B8C-47D8-8C04-22B2859FA002}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4818EBBC-4B8C-47D8-8C04-22B2859FA002}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4818EBBC-4B8C-47D8-8C04-22B2859FA002}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0890470F-A14C-450B-A269-4DEDB465FBCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0890470F-A14C-450B-A269-4DEDB465FBCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0890470F-A14C-450B-A269-4DEDB465FBCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0890470F-A14C-450B-A269-4DEDB465FBCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
